@@ -94,13 +94,14 @@ public class DistributedLock_zk {
                 log.info("获取分布式锁成功...");
                 return;
             } catch (Exception e) {
-                // 锁节点已存在获取锁失败，重置同步资源的值并挂起线程
+                // 锁节点已存在获取锁失败
                 log.info("获取分布式锁失败...");
                 try {
+                    // 若锁已被释放过，重置同步资源的值并挂起线程
                     if (zkLockLatch.getCount() <= 0) {
                         zkLockLatch = new CountDownLatch(1);
                     }
-                    // 调用await()方法的线程会被挂起，它会等待直到count值为0才继续执行
+                    // 调用await()方法的线程（主线程）会被挂起，它会等待直到count值为0才继续执行
                     zkLockLatch.await();
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();

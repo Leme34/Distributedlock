@@ -36,21 +36,22 @@ public class LockMethodInterceptor {
         // 分布式锁的key
         final String lockKey = cacheKeyGenerator.getLockKey(pjp);
         // client(最好是唯一键的)，分布式锁的值= 时间戳 + "|" +uuid
-        String value = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
         try {
             // 假设上锁成功，但是设置过期时间失效，以后拿到的都是 false
-            final boolean success = redisLockHelper.lock(lockKey, value, lock.expire(), lock.timeUnit());
+            final boolean success = redisLockHelper.lock(lockKey, uuid, lock.expire());
             if (!success) {
                 throw new RuntimeException("重复提交");
             }
             try {
+                // 执行业务逻辑
                 return pjp.proceed();
             } catch (Throwable throwable) {
                 throw new RuntimeException("系统异常");
             }
         } finally {
-            // TODO 如果演示的话需要注释该代码;实际应该放开
-            redisLockHelper.unlock(lockKey, value);
+            // 执行完后解锁
+            redisLockHelper.unlock(lockKey, uuid);
         }
     }
 }

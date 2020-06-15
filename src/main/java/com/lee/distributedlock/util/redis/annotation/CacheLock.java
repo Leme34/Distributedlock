@@ -23,12 +23,12 @@ public @interface CacheLock {
      */
     int expire() default 5;
 
-    /**
-     * 超时时间单位
-     *
-     * @return 秒
-     */
-    TimeUnit timeUnit() default TimeUnit.SECONDS;
+//    /**
+//     * 超时时间单位
+//     *
+//     * @return 秒
+//     */
+//    TimeUnit timeUnit() default TimeUnit.SECONDS;
 
     /**
      * <p>Key的分隔符（默认 :）</p>
